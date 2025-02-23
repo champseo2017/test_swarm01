@@ -1,0 +1,22 @@
+services:
+  web:
+    image: ${DOCKER_IMAGE:-champseo2017/test_swarm01:1.0}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: overlay
