@@ -1,6 +1,6 @@
 services:
   web:
-    image: ${DOCKER_IMAGE:-champseo2017/test_swarm01:1.0}
+    image: boomgt123/test_swarm01:1.0
     build:
       context: .
       dockerfile: Dockerfile

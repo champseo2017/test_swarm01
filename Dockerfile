@@ -1,5 +1,5 @@
 # เริ่มจาก Node.js official image
-FROM node:18-alpine
+FROM node:23-alpine
 
 # สร้าง working directory
 WORKDIR /usr/src/app
