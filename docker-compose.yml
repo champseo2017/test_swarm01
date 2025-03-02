@@ -1,22 +1,42 @@
+# ไฟล์ docker-compose.yml สำหรับระบบที่ใช้ Docker Swarm
+
 services:
+  # กำหนดบริการชื่อ web
   web:
+    # ระบุอิมเมจที่ใช้สำหรับบริการนี้
     image: boomgt123/test_swarm01:1.0
-    build:
-      context: .
-      dockerfile: Dockerfile
+    
+    # กำหนดพอร์ตที่เปิดให้บริการ (พอร์ต 3000 บนเครื่อง host ไปยังพอร์ต 3000 ในคอนเทนเนอร์)
     ports:
       - "3000:3000"
+    
+    # ส่วนการกำหนดค่าสำหรับการเผยแพร่บริการใน Swarm
     deploy:
+      # จำนวนสำเนา (คอนเทนเนอร์) ที่ต้องการให้รันพร้อมกัน
       replicas: 3
+      
+      # กำหนดให้รันเฉพาะบน worker nodes เท่านั้น ไม่รันบน manager
+      placement:
+        constraints:
+          - node.role != manager  # เงื่อนไขไม่ให้รันบนโหนดที่เป็น manager
+      
+      # การกำหนดค่าสำหรับการอัปเดต (Rolling Update)
       update_config:
-        parallelism: 1
-        delay: 10s
+        parallelism: 1  # อัปเดตครั้งละ 1 คอนเทนเนอร์
+        delay: 10s  # รอ 10 วินาทีก่อนอัปเดตคอนเทนเนอร์ถัดไป
+      
+      # นโยบายการรีสตาร์ทเมื่อเกิดปัญหา
       restart_policy:
-        condition: on-failure
-        max_attempts: 3
+        condition: on-failure  # รีสตาร์ทเฉพาะเมื่อเกิดความล้มเหลว
+        max_attempts: 3  # พยายามรีสตาร์ทสูงสุด 3 ครั้ง
+    
+    # กำหนดเครือข่ายที่คอนเทนเนอร์นี้จะเชื่อมต่อ
     networks:
       - webnet
 
+# กำหนดเครือข่ายที่ใช้ในระบบ
 networks:
+  # เครือข่ายชื่อ webnet
   webnet:
+    # ใช้ไดรเวอร์แบบ overlay ซึ่งเหมาะสำหรับการสื่อสารระหว่างโหนดใน Swarm
     driver: overlay
