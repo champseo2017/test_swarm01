@@ -1,6 +1,9 @@
 # เริ่มจาก Node.js official image
 FROM node:23-alpine
 
+# ติดตั้ง curl สำหรับใช้ใน health check
+RUN apk --no-cache add curl
+
 # สร้าง working directory
 WORKDIR /usr/src/app
 
